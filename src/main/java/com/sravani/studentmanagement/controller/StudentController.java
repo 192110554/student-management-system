@@ -16,6 +16,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import jakarta.servlet.http.HttpServletResponse;
 
 import java.util.List;
 
@@ -43,6 +46,7 @@ public class StudentController {
         student.setName(studentDTO.getName());
         student.setEmail(studentDTO.getEmail());
         student.setCourse(studentDTO.getCourse());
+        student.setImageUrl(studentDTO.getImageUrl());
 
         Student savedStudent = studentService.saveStudent(student);
         StudentDTO responseDTO = new StudentDTO();
@@ -51,6 +55,7 @@ public class StudentController {
         responseDTO.setName(savedStudent.getName());
         responseDTO.setEmail(savedStudent.getEmail());
         responseDTO.setCourse(savedStudent.getCourse());
+        responseDTO.setImageUrl(savedStudent.getImageUrl());
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(responseDTO);
@@ -93,5 +98,22 @@ public class StudentController {
                                  @RequestBody Student updatedStudent) {
 
         return studentService.updateStudent(id, updatedStudent);
+    }
+    @GetMapping("/students/export")
+    public ResponseEntity<byte[]> exportStudents() throws Exception {
+
+        byte[] excelFile = studentService.exportStudentsToExcel();
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=students.xlsx")
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(excelFile);
+    }
+    @GetMapping("/students/export/pdf")
+    public void exportToPdf(HttpServletResponse response) throws Exception {
+
+        studentService.exportToPdf(response);
+
     }
 }

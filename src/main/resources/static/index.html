@@ -1,80 +1,438 @@
 <!DOCTYPE html>
 <html>
 <head>
+
     <title>Student Management System</title>
 
     <link
             href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
             rel="stylesheet">
+
+    <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <style>
+
+        body {
+            background: #f4f7fc;
+        }
+
+        .dashboard-card {
+            border: none;
+            border-radius: 20px;
+            color: white;
+            transition: 0.3s;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0px 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .table {
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .table thead {
+            background: #0d6efd;
+            color: white;
+        }
+
+        .btn {
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+        }
+
+        @media (max-width: 768px) {
+
+            .container {
+                padding-left: 20px;
+                padding-right: 20px;
+            }
+
+            h1,
+            h2 {
+                font-size: 2rem;
+            }
+
+            .dashboard-card {
+                margin-bottom: 20px;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+
+            .dashboard-card {
+                margin-bottom: 20px;
+            }
+
+            .btn {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+
+            .card {
+                border-radius: 20px;
+            }
+
+            .col-auto {
+                width: 100%;
+            }
+
+            .col-auto .btn {
+                width: 100%;
+            }
+
+            .row.mb-4 {
+                display: block;
+            }
+
+            .row.mb-4 .col-12 {
+                width: 100%;
+                margin-bottom: 20px;
+            }
+        }
+
+        .dark-card {
+            background-color: #2d2d2d !important;
+            color: white !important;
+        }
+
+        .dark-input {
+            background-color: #3b3b3b !important;
+            color: white !important;
+            border: 1px solid #555 !important;
+        }
+
+        .dark-input::placeholder {
+            color: #cccccc !important;
+        }
+
+        .dark-table {
+            background-color: #2d2d2d !important;
+            color: white !important;
+        }
+
+        .dark-table thead {
+            background-color: #0d6efd !important;
+            color: white !important;
+        }
+
+        .dark-table,
+        .dark-table thead,
+        .dark-table tbody,
+        .dark-table tr,
+        .dark-table th,
+        .dark-table td {
+
+            background-color: #2d2d2d !important;
+            color: white !important;
+
+        }
+
+        .dark-table tbody tr:hover td{
+            background:#3b3b3b !important;
+        }
+
+    </style>
+
 </head>
-<body class="bg-light">
+<body id="body" class="bg-light">
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow">
+
+    <div class="container">
+
+        <span class="navbar-brand fs-3 fw-bold">
+            <i class="fa-solid fa-graduation-cap me-2"></i>
+            Student Management System
+        </span>
+
+        <button
+                id="themeBtn"
+                class="btn btn-light"
+                onclick="toggleTheme()">
+
+            🌙 Dark Mode
+
+        </button>
+
+    </div>
+
+</nav>
 
 <div class="container mt-5">
 
-<h1>Add Student</h1>
+    <div id="studentCard" class="card shadow-lg p-4 rounded-4 mb-5">
+
+        <h1 class="mb-4">
+
+        <i class="fa-solid fa-user-plus text-primary"></i>
+
+        Add Student
+
+    </h1>
 
     <input type="text"
            id="name"
            placeholder="Enter Name"
-           class="form-control w-25 mb-3">
-<br><br>
+           class="form-control form-control-lg mb-4">
 
     <input type="email"
            id="email"
            placeholder="Enter Email"
-           class="form-control w-25 mb-3">
-<br><br>
+           class="form-control form-control-lg mb-4">
 
     <input type="text"
            id="course"
            placeholder="Enter Course"
-           class="form-control w-25 mb-3">
-<br><br>
+           class="form-control form-control-lg mb-4">
+
+        <input
+                type="file"
+                id="imageFile"
+                class="form-control form-control-lg mb-4"
+                accept="image/*">
 
     <button
-            onclick="saveStudent()"
-            class="btn btn-primary mb-4">
+            class="btn btn-primary btn-lg shadow-sm"
+            onclick="saveStudent()">
+
+        <i class="fa-solid fa-floppy-disk me-2"></i>
+
         Save Student
+
     </button>
 
-<h2>Search Student</h2>
+    </div>
 
-<input
-        type="text"
-        id="searchName"
-        placeholder="Enter Student Name">
+    <h2 class="mb-4">
+        <i class="fa-solid fa-magnifying-glass text-success"></i>
+        Search Student
+    </h2>
 
-    <button
-            onclick="searchStudent()"
-            class="btn btn-success">
-        Search
-    </button>
+    <div class="row g-2 mb-3">
 
-    <button
-            onclick="loadStudents()"
-            class="btn btn-secondary">
-        Show All
-    </button>
+        <div class="col-md-4">
+            <input
+                    type="text"
+                    id="searchName"
+                    placeholder="Enter Student Name"
+                    class="form-control">
+        </div>
+
+        <div class="col-auto">
+            <button
+                    class="btn btn-success shadow-sm"
+                    onclick="searchStudent()">
+
+                <i class="fa-solid fa-magnifying-glass me-2"></i>
+                Search
+            </button>
+        </div>
+
+        <div class="col-auto">
+            <button
+                    class="btn btn-secondary shadow-sm"
+                    onclick="loadStudents()">
+
+                <i class="fa-solid fa-list me-2"></i>
+                Show All
+            </button>
+        </div>
+
+    </div>
+
+    <div class="mt-3">
+
+        <div class="row g-2 mb-3">
+
+            <div class="col-md-4">
+                <input
+                        type="text"
+                        id="searchEmail"
+                        placeholder="Enter Student Email"
+                        class="form-control">
+            </div>
+
+            <div class="col-auto">
+                <button
+                        class="btn btn-info"
+                        onclick="searchByEmail()">
+
+                    <i class="fa-solid fa-envelope me-2"></i>
+                    Search Email
+                </button>
+            </div>
+
+        </div>
+
+        <div class="row g-2 mb-3">
+
+            <div class="col-md-4">
+                <input
+                        type="text"
+                        id="searchCourse"
+                        placeholder="Enter Course"
+                        class="form-control">
+            </div>
+
+            <div class="col-auto">
+                <button
+                        class="btn btn-dark"
+                        onclick="searchByCourse()">
+
+                    <i class="fa-solid fa-book me-2"></i>
+                    Search Course
+                </button>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="d-flex flex-wrap gap-2 mb-4">
+
+        <button
+                class="btn btn-primary me-2"
+                onclick="sortByName()">
+            Sort Name A-Z
+        </button>
+
+        <button
+                class="btn btn-success me-2"
+                onclick="sortByIdAsc()">
+            Sort ID ↑
+        </button>
+
+        <button
+                class="btn btn-danger"
+                onclick="sortByIdDesc()">
+            Sort ID ↓
+        </button>
+
+    </div>
 
 <br><br>
 
-<h2>Student List</h2>
+    <div class="row mb-4">
 
-    <table class="table table-striped table-bordered table-hover">
-    <thead>
-    <tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th>Email</th>
-        <th>Course</th>
-        <th>Action</th>
-    </tr>
-    </thead>
+        <div class="col-12 col-md-4">
+            <div
+                    class="card dashboard-card shadow"
+                    style="background: linear-gradient(45deg,#4e54c8,#8f94fb);">
+                <div class="card-body text-center">
+                    <i class="fa-solid fa-users fa-2x mb-3"></i>
+                    <h5>Total Students</h5>
+                    <h2 id="totalStudents">0</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-4">
+            <div
+                    class="card dashboard-card shadow"
+                    style="background: linear-gradient(45deg,#11998e,#38ef7d);">
+                <div class="card-body text-center">
+                    <i class="fa-brands fa-java fa-2x mb-3"></i>
+                    <h5>Java Students</h5>
+                    <h2 id="javaStudents">0</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-4">
+            <div
+                    class="card dashboard-card shadow"
+                    style="background: linear-gradient(45deg,#ff512f,#dd2476);">
+                <div class="card-body text-center">
+                    <i class="fa-solid fa-leaf fa-2x mb-3"></i>
+                    <h5>Spring Boot Students</h5>
+                    <h2 id="springStudents">0</h2>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="chartCard" class="card shadow p-4 mt-4">
+        <h2 id="chartTitle">Student Statistics</h2>
+
+        <canvas id="studentChart"></canvas>
+
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+
+        <h2>Student List</h2>
+
+        <div>
+
+            <button
+                    class="btn btn-success me-2"
+                    onclick="exportStudents()">
+
+                📥 Export Excel
+
+            </button>
+
+            <button
+                    class="btn btn-danger"
+                    onclick="exportPdf()">
+
+                📄 Export PDF
+
+            </button>
+
+        </div>
+
+    </div>
+
+    <div id="loadingSpinner"
+         class="text-center my-3"
+         style="display:none;">
+
+        <div class="spinner-border text-primary"
+             role="status">
+        </div>
+
+        <p class="mt-2">
+            Loading Students...
+        </p>
+
+    </div>
+
+    <div class="table-responsive">
+
+        <table id="studentTable" class="table table-hover table-striped shadow">
+
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Course</th>
+                <th>Photo</th>
+                <th>Action</th>
+            </tr>
+            </thead>
 
     <tbody id="studentTableBody">
 
     </tbody>
 </table>
+
+    </div>
 
     <div class="mt-3">
 
@@ -91,6 +449,64 @@
                 onclick="nextPage()">
             Next
         </button>
+
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- Student Profile Modal -->
+<div class="modal fade" id="studentModal" tabindex="-1">
+
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+
+            <div class="modal-header bg-primary text-white">
+
+                <h5 class="modal-title">
+                    Student Profile
+                </h5>
+
+                <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+            <div class="modal-body text-center">
+
+                <img
+                        id="modalImage"
+                        src=""
+                        width="120"
+                        height="120"
+                        class="rounded-circle mb-3"
+                        style="object-fit:cover;">
+
+                <h4 id="modalName"></h4>
+
+                <p>
+                    <strong>ID :</strong>
+                    <span id="modalId"></span>
+                </p>
+
+                <p>
+                    <strong>Email :</strong>
+                    <span id="modalEmail"></span>
+                </p>
+
+                <p>
+                    <strong>Course :</strong>
+                    <span id="modalCourse"></span>
+                </p>
+
+            </div>
+
+        </div>
 
     </div>
 

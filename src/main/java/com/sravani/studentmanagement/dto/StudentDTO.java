@@ -1,12 +1,22 @@
 package com.sravani.studentmanagement.dto;
 
 public class StudentDTO {
+
     private Long id;
     private String name;
     private String email;
     private String course;
+    private String imageUrl;
 
     public StudentDTO() {
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -32,11 +42,12 @@ public class StudentDTO {
     public void setCourse(String course) {
         this.course = course;
     }
-    public Long getId() {
-        return id;
+
+    public String getImageUrl() {
+        return imageUrl;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

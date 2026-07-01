@@ -22,6 +22,8 @@ public class Student {
     @NotBlank(message = "Course is required")
     private String course;
 
+    private String imageUrl;
+
     public Student() {
     }
 
@@ -55,5 +57,13 @@ public class Student {
 
     public void setCourse(String course) {
         this.course = course;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }
