@@ -60,5 +60,46 @@
 
 </div>
 
+<hr>
+
+<h3>Register New User</h3>
+
+<input type="text" id="regUsername" placeholder="Username"><br><br>
+
+<input type="password" id="regPassword" placeholder="Password"><br><br>
+
+<select id="regRole">
+    <option value="ROLE_ADMIN">Admin</option>
+    <option value="ROLE_USER">User</option>
+</select>
+
+<br><br>
+
+<button onclick="registerUser()">Register</button>
+
+<script>
+    async function registerUser() {
+
+        const username = document.getElementById("regUsername").value;
+        const password = document.getElementById("regPassword").value;
+        const role = document.getElementById("regRole").value;
+
+        const response = await fetch("/api/register", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                username: username,
+                password: password,
+                role: role
+            })
+        });
+
+        const message = await response.text();
+        alert(message);
+    }
+</script>
+
 </body>
 </html>
