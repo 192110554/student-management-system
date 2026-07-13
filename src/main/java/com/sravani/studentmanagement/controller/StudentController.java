@@ -1,5 +1,6 @@
 package com.sravani.studentmanagement.controller;
 
+import com.sravani.studentmanagement.service.EmailService;
 import com.sravani.studentmanagement.entity.Student;
 import com.sravani.studentmanagement.service.StudentService;
 import com.sravani.studentmanagement.dto.StudentDTO;
@@ -28,9 +29,13 @@ public class StudentController {
 
     private final StudentService studentService;
 
-    public StudentController(StudentService studentService) {
+    private final EmailService emailService;
+
+    public StudentController(StudentService studentService,
+                             EmailService emailService) {
 
         this.studentService = studentService;
+        this.emailService = emailService;
     }
 
     @GetMapping("/students")
@@ -49,6 +54,12 @@ public class StudentController {
         student.setImageUrl(studentDTO.getImageUrl());
 
         Student savedStudent = studentService.saveStudent(student);
+
+        emailService.sendWelcomeEmail(
+                savedStudent.getEmail(),
+                savedStudent.getName(),
+                savedStudent.getCourse()
+        );
         StudentDTO responseDTO = new StudentDTO();
 
         responseDTO.setId(savedStudent.getId());

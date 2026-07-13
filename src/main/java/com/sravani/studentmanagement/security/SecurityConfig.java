@@ -8,6 +8,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import com.sravani.studentmanagement.service.CustomUserDetailsService;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.http.HttpMethod;
 
 @Configuration
 public class SecurityConfig {
@@ -26,16 +27,61 @@ public class SecurityConfig {
 
         http
                 .authorizeHttpRequests(auth -> auth
+
                         .requestMatchers(
                                 "/login",
-                                "/register",
-                                "/",
-                                "/index.html",
+                                "/api/register",
+                                "/api/upload",
                                 "/css/**",
-                                "/js/**")
+                                "/js/**",
+                                "/uploads/**")
                         .permitAll()
+
+                        .requestMatchers(org.springframework.http.HttpMethod.GET,
+                                "/api/courses")
+                        .hasAnyRole("ADMIN", "USER")
+
+                        .requestMatchers(org.springframework.http.HttpMethod.POST,
+                                "/api/courses")
+                        .hasRole("ADMIN")
+
+                        .requestMatchers(org.springframework.http.HttpMethod.DELETE,
+                                "/api/courses/**")
+                        .hasRole("ADMIN")
+
+                        .requestMatchers("/api/students/export/**")
+                        .hasRole("ADMIN")
+
+                        .requestMatchers(org.springframework.http.HttpMethod.POST,
+                                "/api/students")
+                        .hasRole("ADMIN")
+
+                        .requestMatchers(org.springframework.http.HttpMethod.PUT,
+                                "/api/students/**")
+                        .hasRole("ADMIN")
+
+                        .requestMatchers(org.springframework.http.HttpMethod.DELETE,
+                                "/api/students/**")
+                        .hasRole("ADMIN")
+
+                        .requestMatchers(org.springframework.http.HttpMethod.GET,
+                                "/api/students/**")
+                        .hasAnyRole("ADMIN", "USER")
+
+                        .requestMatchers(org.springframework.http.HttpMethod.GET,
+                                "/api/attendance/**")
+                        .hasAnyRole("ADMIN", "USER")
+
+                        .requestMatchers(org.springframework.http.HttpMethod.POST,
+                                "/api/attendance/**")
+                        .hasRole("ADMIN")
+
+                        .requestMatchers(org.springframework.http.HttpMethod.DELETE,
+                                "/api/attendance/**")
+                        .hasRole("ADMIN")
+
                         .anyRequest()
-                        .permitAll()
+                        .authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/login")

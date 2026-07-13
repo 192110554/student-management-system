@@ -144,6 +144,177 @@
             background:#3b3b3b !important;
         }
 
+        .dark-card {
+            background: #2d2d2d !important;
+            color: white !important;
+            border: 1px solid #444 !important;
+        }
+
+        .dark-input,
+        .dark-input option {
+            background: #3b3b3b !important;
+            color: white !important;
+        }
+
+        .bg-dark .table-responsive{
+            background:#2d2d2d;
+        }
+
+        .bg-dark hr{
+            border-color:#555;
+        }
+
+        .bg-dark .form-select{
+            background-color:#3b3b3b !important;
+            color:white !important;
+            border:1px solid #555 !important;
+        }
+
+        .bg-dark .form-select option{
+            background-color:#3b3b3b !important;
+            color:white !important;
+        }
+
+        #aiFloatingButton{
+
+            position:fixed;
+
+            bottom:30px;
+
+            right:30px;
+
+            width:70px;
+
+            height:70px;
+
+            border-radius:50%;
+
+            background:#0d6efd;
+
+            color:white;
+
+            display:flex;
+
+            justify-content:center;
+
+            align-items:center;
+
+            font-size:34px;
+
+            cursor:pointer;
+
+            box-shadow:0 8px 20px rgba(0,0,0,.3);
+
+            z-index:9999;
+
+        }
+
+        #aiChatWindow{
+
+            position:fixed;
+
+            bottom:120px;
+
+            right:30px;
+
+            width:360px;
+
+            height:500px;
+
+            background:white;
+
+            border-radius:20px;
+
+            display:none;
+
+            flex-direction:column;
+
+            box-shadow:0 10px 30px rgba(0,0,0,.3);
+
+            z-index:9999;
+
+            overflow:hidden;
+
+        }
+
+        #aiHeader{
+
+            background:#0d6efd;
+
+            color:white;
+
+            padding:15px;
+
+            font-weight:bold;
+
+            display:flex;
+
+            justify-content:space-between;
+
+            align-items:center;
+
+        }
+
+        #closeAI{
+
+            cursor:pointer;
+
+            font-size:18px;
+
+        }
+
+        #aiMessages{
+
+            flex:1;
+
+            padding:15px;
+
+            overflow-y:auto;
+
+        }
+
+        .aiMessage{
+
+            background:#f1f1f1;
+
+            padding:12px;
+
+            border-radius:10px;
+
+        }
+
+        #aiInputArea{
+
+            display:flex;
+
+            border-top:1px solid #ddd;
+
+        }
+
+        #aiInput{
+
+            flex:1;
+
+            border:none;
+
+            padding:15px;
+
+            outline:none;
+
+        }
+
+        #sendAI{
+
+            border:none;
+
+            background:#0d6efd;
+
+            color:white;
+
+            width:70px;
+
+        }
+
     </style>
 
 </head>
@@ -153,19 +324,43 @@
 
     <div class="container">
 
-        <span class="navbar-brand fs-3 fw-bold">
-            <i class="fa-solid fa-graduation-cap me-2"></i>
-            Student Management System
-        </span>
+        <div class="d-flex align-items-center">
 
-        <button
-                id="themeBtn"
-                class="btn btn-light"
-                onclick="toggleTheme()">
+    <span class="navbar-brand fs-3 fw-bold mb-0">
+        <i class="fa-solid fa-graduation-cap me-2"></i>
+        Student Management System
+    </span>
 
-            🌙 Dark Mode
+        </div>
 
-        </button>
+        <div class="d-flex align-items-center">
+
+    <span
+            id="loggedInUser"
+            class="text-white fw-bold me-3">
+
+        Welcome
+
+    </span>
+
+            <button
+                    id="themeBtn"
+                    class="btn btn-light me-2"
+                    onclick="toggleTheme()">
+
+                🌙 Dark Mode
+
+            </button>
+
+            <a
+                    href="/logout"
+                    class="btn btn-danger">
+
+                Logout
+
+            </a>
+
+        </div>
 
     </div>
 
@@ -193,10 +388,15 @@
            placeholder="Enter Email"
            class="form-control form-control-lg mb-4">
 
-    <input type="text"
-           id="course"
-           placeholder="Enter Course"
-           class="form-control form-control-lg mb-4">
+        <select
+                id="course"
+                class="form-select">
+
+            <option value="">
+                Select Course
+            </option>
+
+        </select>
 
         <input
                 type="file"
@@ -280,11 +480,15 @@
         <div class="row g-2 mb-3">
 
             <div class="col-md-4">
-                <input
-                        type="text"
+                <select
                         id="searchCourse"
-                        placeholder="Enter Course"
-                        class="form-control">
+                        class="form-select">
+
+                    <option value="">
+                        Select Course
+                    </option>
+
+                </select>
             </div>
 
             <div class="col-auto">
@@ -379,6 +583,7 @@
         <div>
 
             <button
+                    id="exportExcelBtn"
                     class="btn btn-success me-2"
                     onclick="exportStudents()">
 
@@ -387,6 +592,7 @@
             </button>
 
             <button
+                    id="exportPdfBtn"
                     class="btn btn-danger"
                     onclick="exportPdf()">
 
@@ -451,6 +657,48 @@
         </button>
 
     </div>
+
+</div>
+
+<hr class="my-5">
+
+<div
+        class="card shadow-lg p-4"
+        id="attendanceCard">
+
+    <h2
+            class="mb-4"
+            id="attendanceTitle">
+
+        Attendance History
+
+    </h2>
+
+    <table
+            class="table table-bordered table-striped"
+            id="attendanceTable">
+
+        <thead>
+
+        <tr>
+
+            <th>ID</th>
+
+            <th>Student</th>
+
+            <th>Date</th>
+
+            <th>Status</th>
+
+        </tr>
+
+        </thead>
+
+        <tbody id="attendanceTableBody">
+
+        </tbody>
+
+    </table>
 
 </div>
 
@@ -537,6 +785,51 @@
              id="toastMessage">
 
         </div>
+
+    </div>
+
+</div>
+
+<div id="aiFloatingButton">
+
+    🤖
+
+</div>
+
+<div id="aiChatWindow">
+
+    <div id="aiHeader">
+
+        🤖 Student AI Assistant
+
+        <span id="closeAI">✖</span>
+
+    </div>
+
+    <div id="aiMessages">
+
+        <div class="aiMessage">
+
+            Hello 👋<br><br>
+
+            Ask me anything about your students.
+
+        </div>
+
+    </div>
+
+    <div id="aiInputArea">
+
+        <input
+                type="text"
+                id="aiInput"
+                placeholder="Type your question...">
+
+        <button id="sendAI">
+
+            ➤
+
+        </button>
 
     </div>
 

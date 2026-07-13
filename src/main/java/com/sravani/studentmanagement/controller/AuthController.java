@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.core.Authentication;
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 public class AuthController {
@@ -35,6 +38,11 @@ public class AuthController {
     public ResponseEntity<String> registerUser(
             @Valid @RequestBody RegisterDTO registerDTO) {
 
+        if (userService.findByUsername(registerDTO.getUsername()).isPresent()) {
+            return ResponseEntity.badRequest()
+                    .body("Username already exists");
+        }
+
         User user = new User();
 
         user.setUsername(registerDTO.getUsername());
@@ -44,5 +52,16 @@ public class AuthController {
         userService.save(user);
 
         return ResponseEntity.ok("User Registered Successfully");
+    }
+
+    @GetMapping("/api/current-user")
+    @ResponseBody
+    public ResponseEntity<User> getCurrentUser(
+            org.springframework.security.core.Authentication authentication) {
+
+        User user = userService.findByUsername(authentication.getName())
+                .orElseThrow();
+
+        return ResponseEntity.ok(user);
     }
 }

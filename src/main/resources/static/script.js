@@ -5,6 +5,8 @@ let totalPages = 0;
 let studentsList = [];
 let studentChart = null;
 
+let loggedInUserRole = "";
+
 async function saveStudent() {
 
     const name = document.getElementById("name").value;
@@ -146,6 +148,20 @@ function loadStudents() {
 
             const students = data.content;
 
+            console.log("Students:", students);
+
+            console.log("Dashboard Total:", students.length);
+
+            console.log("Java:",
+                students.filter(s =>
+                    s.course.toLowerCase().includes("java")
+                ).length);
+
+            console.log("Spring:",
+                students.filter(s =>
+                    s.course.toLowerCase().includes("spring")
+                ).length);
+
             updateDashboardCards(students);
 
             displayStudents(students);
@@ -204,7 +220,6 @@ function editStudent(id) {
             document.getElementById("name").value = student.name;
             document.getElementById("email").value = student.email;
             document.getElementById("course").value = student.course;
-            document.getElementById("imageUrl").value = student.imageUrl;
         })
 
 .catch(error => {
@@ -314,6 +329,46 @@ function displayStudents(students) {
 
     students.forEach(student => {
 
+        let actionButtons = `
+<button
+    class="btn btn-info btn-sm"
+    onclick="viewStudent(${student.id})">
+
+    <i class="fa-solid fa-eye"></i>
+    View
+</button>
+`;
+
+        if (loggedInUserRole === "ROLE_ADMIN") {
+
+            actionButtons += `
+<button
+    class="btn btn-warning btn-sm"
+    onclick="editStudent(${student.id})">
+
+    <i class="fa-solid fa-pen-to-square"></i>
+    Edit
+</button>
+
+<button
+    class="btn btn-danger btn-sm"
+    onclick="deleteStudent(${student.id})">
+
+    <i class="fa-solid fa-trash"></i>
+    Delete
+</button>
+
+<button
+    class="btn btn-success btn-sm"
+    onclick="markAttendance(${student.id})">
+
+    <i class="fa-solid fa-calendar-check"></i>
+    Attendance
+
+</button>
+`;
+        }
+
         const row = `
 <tr>
     <td>${student.id}</td>
@@ -329,35 +384,8 @@ function displayStudents(students) {
     </td>
 
     <td>
-
-        <button
-    class="btn btn-info btn-sm"
-    onclick="viewStudent(${student.id})">
-
-    <i class="fa-solid fa-eye"></i>
-    View
-
-</button>
-
-<button
-    class="btn btn-warning btn-sm"
-    onclick="editStudent(${student.id})">
-
-    <i class="fa-solid fa-pen-to-square"></i>
-    Edit
-
-</button>
-
-<button
-    class="btn btn-danger btn-sm"
-    onclick="deleteStudent(${student.id})">
-
-    <i class="fa-solid fa-trash"></i>
-    Delete
-
-</button>
-
-    </td>
+    ${actionButtons}
+</td>
 </tr>
 `;
 
@@ -433,8 +461,21 @@ function toggleTheme() {
         document.getElementById("studentTable")
             .classList.add("dark-table");
 
+        document.getElementById("attendanceCard")
+            .classList.add("dark-card");
+
+        document.getElementById("attendanceTable")
+            .classList.add("dark-table");
+
+        document.getElementById("attendanceTitle")
+            .classList.add("text-white");
+
         document.querySelectorAll("input").forEach(input => {
             input.classList.add("dark-input");
+        });
+
+        document.querySelectorAll("select").forEach(select => {
+            select.classList.remove("dark-input");
         });
 
         card.classList.add("dark-card");
@@ -452,7 +493,6 @@ function toggleTheme() {
         document.getElementById("chartCard").classList.remove("bg-white");
 
         document.getElementById("chartTitle").classList.add("text-white");
-
     } else {
 
         body.classList.remove("bg-dark", "text-white");
@@ -464,8 +504,21 @@ function toggleTheme() {
         document.getElementById("studentTable")
             .classList.remove("dark-table");
 
+        document.getElementById("attendanceCard")
+            .classList.remove("dark-card");
+
+        document.getElementById("attendanceTable")
+            .classList.remove("dark-table");
+
+        document.getElementById("attendanceTitle")
+            .classList.remove("text-white");
+
         document.querySelectorAll("input").forEach(input => {
             input.classList.remove("dark-input");
+        });
+
+        document.querySelectorAll("select").forEach(select => {
+            select.classList.add("dark-input");
         });
 
         card.classList.remove("dark-card");
@@ -486,11 +539,61 @@ function toggleTheme() {
     }
 }
 
+function loadCourses() {
+
+    fetch("http://localhost:8080/api/courses")
+        .then(response => response.json())
+        .then(courses => {
+
+            const addCourse =
+                document.getElementById("course");
+
+            const searchCourse =
+                document.getElementById("searchCourse");
+
+            addCourse.innerHTML =
+                '<option value="">Select Course</option>';
+
+            searchCourse.innerHTML =
+                '<option value="">Select Course</option>';
+
+            courses.forEach(course => {
+
+                addCourse.innerHTML +=
+                    `<option value="${course.courseName}">
+                        ${course.courseName}
+                    </option>`;
+
+                searchCourse.innerHTML +=
+                    `<option value="${course.courseName}">
+                        ${course.courseName}
+                    </option>`;
+            });
+
+        })
+
+        .catch(error => {
+
+            console.log(error);
+
+        });
+
+}
+
 window.onload = function () {
 
     const savedTheme = localStorage.getItem("theme");
 
     if (savedTheme === "dark") {
+
+        document.getElementById("attendanceCard")
+            .classList.add("dark-card");
+
+        document.getElementById("attendanceTable")
+            .classList.add("dark-table");
+
+        document.getElementById("attendanceTitle")
+            .classList.add("text-white");
 
         document.getElementById("body")
             .classList.replace("bg-light", "bg-dark");
@@ -514,9 +617,17 @@ window.onload = function () {
         document.querySelectorAll("input").forEach(input => {
             input.classList.add("dark-input");
         });
+
+        document.querySelectorAll("select").forEach(select => {
+            select.classList.add("dark-input");
+        });
     }
 
-    loadStudents();
+    loadCourses();      // <-- Added this line
+
+    loadCurrentUser();
+
+    loadAttendance();
 };
 
 function createChart(students) {
@@ -632,3 +743,177 @@ function viewStudent(id) {
         });
 
 }
+
+function loadCurrentUser() {
+
+    fetch("http://localhost:8080/api/current-user")
+        .then(response => response.json())
+        .then(user => {
+
+            document.getElementById("loggedInUser").innerText =
+                "Welcome, " + user.username;
+
+            loggedInUserRole = user.role;
+
+            if (loggedInUserRole === "ROLE_USER") {
+
+                document.getElementById("studentCard").style.display = "none";
+
+                document.getElementById("exportExcelBtn").style.display = "none";
+
+                document.getElementById("exportPdfBtn").style.display = "none";
+            }
+
+            loadStudents();
+
+        });
+
+}
+
+async function markAttendance(studentId) {
+
+    const status = prompt("Enter Attendance (Present/Absent)");
+
+    if (status == null || status.trim() === "") {
+        return;
+    }
+
+    const response = await fetch(
+        `http://localhost:8080/api/attendance/${studentId}?status=${status}`,
+        {
+            method: "POST"
+        }
+    );
+
+    if (response.ok) {
+
+        alert("Attendance Marked Successfully");
+
+        loadAttendance();
+
+    } else {
+
+        alert("Failed to Mark Attendance");
+
+    }
+
+}
+
+async function loadAttendance() {
+
+    const response = await fetch("/api/attendance");
+
+    const attendanceList = await response.json();
+
+    const tableBody =
+        document.getElementById("attendanceTableBody");
+
+    tableBody.innerHTML = "";
+
+    attendanceList.forEach(attendance => {
+
+        tableBody.innerHTML += `
+            <tr>
+
+                <td>${attendance.id}</td>
+
+                <td>${attendance.student.name}</td>
+
+                <td>${attendance.attendanceDate}</td>
+
+                <td>${attendance.status}</td>
+
+            </tr>
+        `;
+
+    });
+
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const aiButton = document.getElementById("aiFloatingButton");
+    const aiWindow = document.getElementById("aiChatWindow");
+    const closeAI = document.getElementById("closeAI");
+
+    aiButton.onclick = function () {
+        aiWindow.style.display = "flex";
+    };
+
+    closeAI.onclick = function () {
+        aiWindow.style.display = "none";
+    };
+
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const aiButton = document.getElementById("aiFloatingButton");
+    const aiWindow = document.getElementById("aiChatWindow");
+    const closeAI = document.getElementById("closeAI");
+    const sendAI = document.getElementById("sendAI");
+
+    aiButton.onclick = function () {
+        aiWindow.style.display = "flex";
+    };
+
+    closeAI.onclick = function () {
+        aiWindow.style.display = "none";
+    };
+
+    sendAI.onclick = async function () {
+
+        const input = document.getElementById("aiInput");
+        const message = input.value.trim();
+
+        if (message === "") return;
+
+        const messages = document.getElementById("aiMessages");
+
+        messages.innerHTML += `
+            <div style="text-align:right;margin:10px;">
+                <span style="
+                    background:#0d6efd;
+                    color:white;
+                    padding:8px 12px;
+                    border-radius:12px;
+                    display:inline-block;">
+                    ${message}
+                </span>
+            </div>
+        `;
+
+        input.value = "";
+
+        messages.innerHTML += `
+            <div id="typing" class="aiMessage">
+                Thinking...
+            </div>
+        `;
+
+        messages.scrollTop = messages.scrollHeight;
+
+        const response = await fetch("/api/ai", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                question: message
+            })
+        });
+
+        const answer = await response.text();
+
+        document.getElementById("typing").remove();
+
+        messages.innerHTML += `
+            <div class="aiMessage">
+                ${answer}
+            </div>
+        `;
+
+        messages.scrollTop = messages.scrollHeight;
+    };
+
+});
