@@ -152,7 +152,7 @@ StudentmanagementApplication.java
 6. Open
 
 ```
-http://localhost:8080
+
 ```
 
 ---

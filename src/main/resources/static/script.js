@@ -47,7 +47,7 @@ async function saveStudent() {
         formData.append("file", file);
 
         const uploadResponse = await fetch(
-            "http://localhost:8080/api/upload",
+            "/api/upload",
             {
                 method: "POST",
                 body: formData
@@ -57,8 +57,8 @@ async function saveStudent() {
     }
 
     const url = editingStudentId
-        ? `http://localhost:8080/api/students/${editingStudentId}`
-        : "http://localhost:8080/api/students";
+        ? `/api/students/${editingStudentId}`
+        : "/api/students";
 
     const method =
         editingStudentId ? "PUT" : "POST";
@@ -123,7 +123,7 @@ function loadStudents() {
         .style.display = "block";
 
     fetch(
-        `http://localhost:8080/api/students?page=${currentPage}&size=${pageSize}`
+        `/api/students?page=${currentPage}&size=${pageSize}`
     )
         .then(response => response.json())
         .then(data => {
@@ -189,7 +189,7 @@ function deleteStudent(id) {
         return;
     }
 
-    fetch(`http://localhost:8080/api/students/${id}`, {
+    fetch(`/api/students/${id}`, {
         method: "DELETE"
     })
         .then(() => {
@@ -211,7 +211,7 @@ function editStudent(id) {
 
     console.log("Edit clicked for ID:", id);
 
-    fetch(`http://localhost:8080/api/students/${id}`)
+    fetch(`/api/students/${id}`)
         .then(response => response.json())
         .then(student => {
 
@@ -235,7 +235,7 @@ function searchStudent() {
     const name =
         document.getElementById("searchName").value;
 
-    fetch(`http://localhost:8080/api/students/name/${name}`)
+    fetch(`/api/students/name/${name}`)
         .then(response => response.json())
         .then(data => {
 
@@ -251,7 +251,7 @@ function searchByEmail() {
         document.getElementById("searchEmail").value;
 
     fetch(
-        `http://localhost:8080/api/students/email/${email}`
+        `/api/students/email/${email}`
     )
         .then(response => response.json())
         .then(data => {
@@ -274,7 +274,7 @@ function searchByCourse() {
         document.getElementById("searchCourse").value;
 
     fetch(
-        `http://localhost:8080/api/students/course/${course}`
+        `/api/students/course/${course}`
     )
         .then(response => response.json())
         .then(data => {
@@ -541,7 +541,7 @@ function toggleTheme() {
 
 function loadCourses() {
 
-    fetch("http://localhost:8080/api/courses")
+    fetch("/api/courses")
         .then(response => response.json())
         .then(courses => {
 
@@ -702,20 +702,20 @@ function createChart(students) {
 function exportStudents() {
 
     window.location.href =
-        "http://localhost:8080/api/students/export";
+        "/api/students/export";
 
 }
 
 function exportPdf() {
 
     window.location.href =
-        "http://localhost:8080/api/students/export/pdf";
+        "/api/students/export/pdf";
 
 }
 
 function viewStudent(id) {
 
-    fetch(`http://localhost:8080/api/students/${id}`)
+    fetch(`/api/students/${id}`)
         .then(response => response.json())
         .then(student => {
 
@@ -746,7 +746,7 @@ function viewStudent(id) {
 
 function loadCurrentUser() {
 
-    fetch("http://localhost:8080/api/current-user")
+    fetch("/api/current-user")
         .then(response => response.json())
         .then(user => {
 
@@ -779,7 +779,7 @@ async function markAttendance(studentId) {
     }
 
     const response = await fetch(
-        `http://localhost:8080/api/attendance/${studentId}?status=${status}`,
+        `/api/attendance/${studentId}?status=${status}`,
         {
             method: "POST"
         }
